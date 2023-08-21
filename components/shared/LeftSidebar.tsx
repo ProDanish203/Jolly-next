@@ -15,8 +15,8 @@ export const LeftSidebar = () => {
       icon: "/logout.svg"
     },
     {
-      title: "About",
-      path: "/about",
+      title: "Create",
+      path: "/create-post",
       icon: "/logout.svg"
     }
   ]

@@ -2,7 +2,6 @@
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -15,8 +14,13 @@ import { UserValdiation } from "@/lib/validations/user";
 import { Button } from "../ui/button";
 import * as z from "zod";
 import Image from "next/image";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 import { Textarea } from "../ui/textarea";
+import { isBase64Image } from "@/lib/utils";
+import { useUploadThing } from "@/lib/uploadThing";
+import { updateUser } from "@/lib/actions/user.actions";
+import { usePathname, useRouter } from "next/navigation";
+
 
 interface Props{
     user: {
@@ -32,22 +36,69 @@ interface Props{
 
 export const AccountProfile = ({user, btnTitle}: Props) => {
   
+  const [files, setFiles] = useState<File[]>([])
+  const { startUpload } = useUploadThing("media")
+
+  const pathname = usePathname();
+  const router = useRouter();
+
   const  form = useForm({
     resolver: zodResolver(UserValdiation),
     defaultValues: {
-      profile_photo: "",
-      name: "",
-      username: "",
-      bio: ""
+      profile_photo: user?.image || "",
+      name: user?.name || "",
+      username: user?.username || "",
+      bio: user?.bio || ""
     }
   });
 
-  const handleFile = (e:ChangeEvent, change:(val:string) => void) => {
+  const handleFile = (e:ChangeEvent<HTMLInputElement>, change:(val:any) => void) => {
     e.preventDefault();
+    const fileReader = new FileReader();
+
+    if(e.target.files && e.target.files.length > 0){
+      const file = e.target.files[0];
+      
+      setFiles(Array.from(e.target.files))
+
+      if(!file.type.includes("image")) return;
+
+      fileReader.onload = async (event) => {
+        const imageDataUrl = event.target?.result?.toString() || '';
+
+        change(imageDataUrl);
+      }
+      fileReader.readAsDataURL(file);
+    }
   }
 
-  function onSubmit(values: z.infer<typeof UserValdiation>) {
-    console.log(values)
+  const onSubmit = async (values: z.infer<typeof UserValdiation>) => {
+    const blob = values.profile_photo;         
+
+    const hasImageChanged = isBase64Image(blob) 
+    if(hasImageChanged){
+      const imgRes = await startUpload(files) 
+
+      if(imgRes && imgRes[0].fileUrl){
+        values.profile_photo = imgRes[0].fileUrl;
+      } 
+    }
+
+    //Update user info
+    await updateUser({
+      userId: user.id,
+      username: values.username,
+      name: values.name,
+      bio: values.bio,
+      image: values.profile_photo,
+      path: pathname
+    })
+
+    if(pathname === '/profile/edit'){
+      router.back();
+    }else{
+      router.push('/')
+    }
   }
   
   return (
@@ -62,15 +113,15 @@ export const AccountProfile = ({user, btnTitle}: Props) => {
           render={({ field }) => (
             <FormItem className="flex justify-start items-center gap-3">
               <FormLabel>{field.value ? 
-              <Image src={field.value} height={35} priority width={35} alt="Profile Photo" className="object-contain"/>
+              <Image src={field.value} height={45} priority width={45} alt="Profile Photo" className="object-cover rounded-full w-20 h-20"/>
               : <div className="rounded-full text-xl font-bold w-16 h-16 cursor-pointer bg-primary flex items-center justify-center text-text">
                 I
               </div>
               }
               </FormLabel>
               <FormControl>
-                <Input type="file" placeholder="Uplaod a photo" {...field} autoComplete="off"
-                className="bg-transparent hidden text-text border-none"
+                <Input type="file" placeholder="Upload a photo" value={undefined} autoComplete="off"
+                className="bg-transparent text-text hidden border-none"
                 accept="image/*"
                 onChange={(e) => handleFile(e, field.onChange)}
                 />
@@ -116,7 +167,7 @@ export const AccountProfile = ({user, btnTitle}: Props) => {
 
           <FormField
           control={form.control}
-          name="name"
+          name="bio"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Bio</FormLabel>
