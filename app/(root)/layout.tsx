@@ -23,7 +23,7 @@ export default function RootLayout({
         <body>
           <Header/>
 
-          <main className='flex flex-row '>
+          <main className='flex flex-row relative'>
             <LeftSidebar/>
 
               <section className='flex min-h-screen flex-1 flex-col items-center bg-bg px-6 pb-10 pt-28 max-md:pb-32 sm:px-10'>

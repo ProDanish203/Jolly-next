@@ -8,7 +8,7 @@ const Home = async () => {
   const {posts, isNext} = await fetchPosts(1, 30);
   const user = await currentUser()
   return (
-    <>
+    <main className='min-h-[200vh]'>
     <h1 className='mt-2 mb-5 text-4xl max-sm:text-3xl font-bold text-text'>Home</h1>
 
     {posts.length === 0 ? (
@@ -29,7 +29,7 @@ const Home = async () => {
      ))}
      </> 
     )}
-    </>
+    </main>
   )
 }
 

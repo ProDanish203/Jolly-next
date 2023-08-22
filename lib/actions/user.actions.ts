@@ -2,6 +2,8 @@
 import { revalidatePath } from "next/cache";
 import User from "../models/user.model";
 import { connectDb } from "../mongoose";
+import Post from "../models/post.model";
+import postcss from "postcss/lib/postcss";
 
 interface Params{
     userId:string;
@@ -48,6 +50,32 @@ export async function fecthUser(userId: string){
             // })
 
     }catch(error: any){  
+        throw new Error(`Failed to fecth User: ${error.message}`);
+    }
+}
+
+export async function fetchUserPosts(userId:string){
+    try{
+        connectDb();
+
+        const posts = await User.findOne({id: userId})
+            .populate({
+                path: 'posts', 
+                model: Post,
+                populate: {
+                    path: "children",
+                    model: Post,
+                    populate: {
+                        path: "author",
+                        model: User,
+                        select: "username image id _id"
+                    }
+                }
+            })
+
+        return posts;
+
+    }catch(error:any){
         throw new Error(`Failed to fecth User: ${error.message}`);
     }
 }
