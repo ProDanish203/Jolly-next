@@ -7,6 +7,18 @@ import { Footer, Header, LeftSidebar, RightSidebar } from '@/components/shared'
 export const metadata: Metadata = {
   title: 'Jolly | Joining Everyone',
   description: `A social media platform where users can create posts and interact with other people thorugh commentig and liking other user's post`,
+  icons: {
+    icon: [
+      '/favicon.ico?v=1'
+    ],
+    apple: [
+      '/apple-touch-icon.png?v=1' 
+    ],
+    shortcut:[
+      '/apple-touch-icon.png'
+    ]
+  },
+  manifest: '/site.webmanifest'
 }
 
 export default function RootLayout({
