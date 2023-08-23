@@ -1,13 +1,18 @@
 import { PostCard } from '@/components/cards';
 import { fetchPosts } from '@/lib/actions/post.actions';
+import { fecthUser } from '@/lib/actions/user.actions';
 import { currentUser } from '@clerk/nextjs';
+import { redirect } from 'next/navigation';
 import React from 'react'
 
 const Home = async () => {
   
   const {posts, isNext} = await fetchPosts(1, 30);
   const user = await currentUser()
-  if(!user) return null;
+  if(!user) redirect('/sign-in');
+
+  const userData = await fecthUser(user?.id);
+  if(!userData?.onboarded) redirect('/onboarding')
   
   return (
     <main className='min-h-[200vh]'>
