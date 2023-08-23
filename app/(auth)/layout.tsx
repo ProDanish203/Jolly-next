@@ -16,7 +16,9 @@ export default function RootLayout({
     <ClerkProvider>
         <html lang="en">
         <body className='bg-bg'>
+          <div className='min-h-screen w-screen flex justify-center items-center'>
             {children}
+          </div>
         </body>
         </html>
     </ClerkProvider>

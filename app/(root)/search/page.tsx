@@ -39,7 +39,8 @@ const Search = async () => {
           image={user.image}
           userType="User"
           />
-        ))}
+        )
+        )}
         
         </>
         )}

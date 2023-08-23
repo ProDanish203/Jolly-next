@@ -23,11 +23,15 @@ body {
   width: 100%;
 }
 :root {
-  --primary: #8fb3ff;
+  --primary: #572f9d;
   --secondary: #ebf1ff;
   --accent: #d41d6d;
   --text: #000000;
   --bg: #ffffff;
+}
+::selection{
+  background-color: var(--primary);
+  color: var(--bg);
 }
 
 /* Spinner Animation */
@@ -185,4 +189,26 @@ img{
   background-clip: border-box;
   -webkit-text-fill-color: transparent;
   -webkit-background-clip: text;
+}
+
+.leftSidebar{
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.rightSidebar{
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex ;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.main-container{
+  flex: 1;
 }

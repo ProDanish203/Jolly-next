@@ -4,25 +4,22 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation";
 import { SignedIn, SignOutButton, useAuth } from '@clerk/nextjs';
 import { navLinks } from "@/utils/data";
-import { fecthUser } from "@/lib/actions/user.actions";
-import { useEffect, useState } from "react";
 
 export const LeftSidebar = () => {
   const router = useRouter();
   const pathName = usePathname();
   const {userId} = useAuth();
 
-
   return (
-    <section className='sticky left-0 top-0 z-20 flex h-screen lg:max-w-[250px] lg:w-full max-lg:w-fit flex-col justify-between overflow-auto border-r-2 border-r-accentBg bg-bgDark1 pb-5 pt-28 max-md:hidden'>
-      <div className="relative flex w-full flex-1 flex-col gap-4 px-6">
+    <section className='leftSidebar z-20 w-fit border-r-2 border-r-accentBg bg-bgDark1 pb-5 pt-28 max-md:hidden'>
+      <div className="relative flex lg:w-full flex-1 flex-col gap-4 lg:px-6">
         {navLinks.map((link) => {
           const isActive = (pathName.includes(link.title) && link.path.length > 1) || pathName === link.path
           if(link.path === "/profile") link.path = `/profile/${userId}`
 
           return (
             <Link href={link.path} key={link.title}
-            className={`${isActive && "bg-primary"} relative flex justify-start items-center gap-2 rounded-lg px-3 lg:pr-6 py-3 w-full `}
+            className={`${isActive && "bg-primary"} relative flex lg:justify-start justify-center items-center gap-2 rounded-lg px-3 lg:pr-6 py-3 w-full `}
             >
               <i className={`${link.icon} text-text text-lg`}></i>
               <p className="max-lg:hidden text-text text-lg">{link.title}</p>
