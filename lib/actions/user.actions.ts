@@ -4,6 +4,7 @@ import User from "../models/user.model";
 import { connectDb } from "../mongoose";
 import Post from "../models/post.model";
 import postcss from "postcss/lib/postcss";
+import { SortOrder, FilterQuery } from "mongoose";
 
 interface Params{
     userId:string;
@@ -77,5 +78,54 @@ export async function fetchUserPosts(userId:string){
 
     }catch(error:any){
         throw new Error(`Failed to fecth User: ${error.message}`);
+    }
+}
+
+
+export async function fetchAllUsers({
+    userId,
+    pageNo = 1, 
+    limit = 30,
+    searchString = "",
+    sortBy = "desc",
+}: {
+    userId: string;
+    pageNo?: number;
+    limit?: number;
+    searchString?: string;
+    sortBy?: SortOrder;
+}){
+    try{    
+        connectDb();
+
+        const skip = (pageNo - 1) * limit;
+
+        const regex = new RegExp(searchString, "i");
+
+        const query: FilterQuery<typeof User> = {
+            id: { $ne: userId}
+        }
+
+        if(searchString.trim() !== ""){
+            query.$or = [
+                {username: {$regex: regex}},
+                {name: {$regex: regex}},
+            ]
+        }
+
+        const sortOptions = {createdAt: sortBy};
+
+        const users = await User.find()
+            .sort(sortOptions)
+            .skip(skip)
+            .limit(limit)
+
+        const totalUsersCount = await User.countDocuments(query);
+
+        const isNext = totalUsersCount > skip + users.length
+
+        return {users, isNext};
+    }catch(error:any){
+        throw new Error(`Failed to fetch all users: ${error.message}`);
     }
 }

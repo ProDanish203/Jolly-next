@@ -41,16 +41,16 @@ export async function createPost({text, author, groupId, path}:Params){
 }
 
 
-export const fetchPosts = async (pageNo = 1, noOfPosts = 20) => {
+export const fetchPosts = async (pageNo = 1, limit = 20) => {
     try{
         connectDb();
 
-        const skip = (pageNo - 1) * noOfPosts
+        const skip = (pageNo - 1) * limit
 
         const posts = await Post.find({parentId: {$in: [null, undefined]}})
             .sort({createdAt: "desc"})
             .skip(skip)
-            .limit(noOfPosts)
+            .limit(limit)
             .populate({path: 'author', model: User})
             .populate({
                 path: "children",
