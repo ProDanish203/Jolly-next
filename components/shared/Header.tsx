@@ -19,11 +19,11 @@ export const Header = () => {
           <SignedIn>
             {/* @ts-ignore */}
             <SignOutButton className="md:hidden rounded-md px-3 py-1.5 cursor-pointer">
-              <Image src="/logout.svg" height={60} width={60} alt='logout' title='Logout' className='object-cover'/>
+              <Image src="/logout.svg" height={50} width={50} alt='logout' title='Logout' className='object-cover cursor-pointer'/>
             </SignOutButton>
           </SignedIn>
         </div>
-      <div className='ml-2'>
+      <div className='ml-2 max-md:hidden'>
         <OrganizationSwitcher
         appearance={{
           baseTheme: dark,
